@@ -1,4 +1,5 @@
 #include "USBCdcAcm.h"
+#include <Arduino.h>
 
 
 #define USB_CDC_ACM_HOST_TASK_PRIORITY   (20)
@@ -33,21 +34,21 @@ void USBCdcAcm::cdc_acm_host_dev_callback(const cdc_acm_host_dev_event_data_t* e
 {
     switch (event->type) {
     case CDC_ACM_HOST_ERROR:
-        GLPrintf("CDC-ACM error has occurred, err_no = %i\n", event->data.error);
+        Serial.printf("CDC-ACM error has occurred, err_no = %i\n", event->data.error);
         break;
     
     case CDC_ACM_HOST_DEVICE_DISCONNECTED:
-        GLPrintln("Playdate disconnected!");
+        Serial.println("Playdate disconnected!");
         xSemaphoreGive(m_smpConnect);
         break;
 
     case CDC_ACM_HOST_SERIAL_STATE:
-        GLPrintf("Serial state notif 0x%04X\n", event->data.serial_state.val);
+        Serial.printf("Serial state notif 0x%04X\n", event->data.serial_state.val);
         break;
     
     case CDC_ACM_HOST_NETWORK_CONNECTION:
     default:
-        GLPrintf("Unsupported CDC event: %i\n", event->type);
+        Serial.printf("Unsupported CDC event: %i\n", event->type);
         break;
     }
 }
@@ -102,13 +103,13 @@ void USBCdcAcm::cdc_acm_task()
             continue;
         }
 
-        GLPrintln("Playdate connected!");
+        Serial.println("Playdate connected!");
         //vTaskDelay(pdMS_TO_TICKS(100));
 
         xSemaphoreTake(m_smpConnect, portMAX_DELAY);
-        if (cdc_acm_host_close(m_hCDC) != ESP_OK)
+        if (m_hCDC != NULL && cdc_acm_host_close(m_hCDC) != ESP_OK)
         {
-            GLPrintln("cdc_acm_host_close failed!");
+            Serial.println("cdc_acm_host_close failed!");
         }
 
         m_hCDC = NULL;
@@ -188,28 +189,37 @@ bool USBCdcAcm::Initialize()
     do {
         if (cdc_acm_host_install(NULL) != ESP_OK)
         {
-            GLPrintln("cdc_acm_host_install failed!");
+            Serial.println("cdc_acm_host_install failed!");
             break;
         }
 
         m_smpConnect = xSemaphoreCreateBinary();
         if (!m_smpConnect)
         {
-            GLPrintln("xSemaphoreCreateBinary failed!");
+            Serial.println("xSemaphoreCreateBinary_m_smpConnect failed!");
+            cdc_acm_host_uninstall();
             break;
         }
 
         m_queData = xQueueCreate(USB_CDC_ACM_DATA_QUEUE_COUNT, sizeof(DataBuffer*));
         if (!m_queData)
         {
-            GLPrintln("xSemaphoreCreateBinary failed!");
+            Serial.println("xQueueCreate_m_queData failed!");
+            vSemaphoreDelete(m_smpConnect);
+            m_smpConnect = NULL;
+            cdc_acm_host_uninstall();
             break;
         }
 
         BaseType_t task_created = xTaskCreate(_cdc_acm_task, "cdc_acm_task", 4096, this, USB_CDC_ACM_HOST_TASK_PRIORITY, NULL);
         if (task_created != pdTRUE)
         {
-            GLPrintln("cdc_acm_task create err!");
+            Serial.println("cdc_acm_task create err!");
+            vQueueDelete(m_queData);
+            m_queData = NULL;
+            vSemaphoreDelete(m_smpConnect);
+            m_smpConnect = NULL;
+            cdc_acm_host_uninstall();
             break;
         }
 
@@ -258,7 +268,7 @@ bool USBCdcAcm::Write(uint8_t* buffer, size_t len, uint32_t timeout_ms)
 
         if (esp_err_t e = cdc_acm_host_data_tx_blocking(m_hCDC, buffer, out, timeout_ms) != ESP_OK)
         {
-            GLPrintf("cdc_acm_host_data_tx_blocking faild! %s\n", esp_err_to_name(e));
+            Serial.printf("cdc_acm_host_data_tx_blocking failed! %s\n", esp_err_to_name(e));
             return false;
         }
         remain -= out;

@@ -1,5 +1,6 @@
 #include "PDUSBEval.h"
-#include "M5Unified.h"
+#include <string>
+// #include "M5Unified.h" // Rimosso perché non utilizzato
 #include <string.h>
 
 

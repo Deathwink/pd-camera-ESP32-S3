@@ -1,6 +1,7 @@
 #include "USBSerialHost.h"
 #include "common.h"
 #include "usb/usb_host.h"
+#include <Arduino.h>
 
 
 
@@ -36,14 +37,14 @@ void USBSerialHost::usb_lib_task()
         
         if (event_flags & USB_HOST_LIB_EVENT_FLAGS_NO_CLIENTS)
         {
-            //GLPrintln("USB_HOST_LIB_EVENT_FLAGS_NO_CLIENTS");
+            // Serial.println("USB_HOST_LIB_EVENT_FLAGS_NO_CLIENTS");
             usb_host_device_free_all();
         }
         
         if (event_flags & USB_HOST_LIB_EVENT_FLAGS_ALL_FREE)
         {
             // Continue handling USB events to allow device reconnection
-            //GLPrintln("USB: All devices freed");
+            // Serial.println("USB: All devices freed");
         }
     }
 }
@@ -58,16 +59,20 @@ bool USBSerialHost::Initialize()
         .intr_flags = ESP_INTR_FLAG_LEVEL1,
     };
 
-    if (usb_host_install(&host_config) != ESP_OK)
+    esp_err_t install_err = usb_host_install(&host_config);
+    if (install_err != ESP_OK)
     {
-        GLPrintln("usb_host_install failed!");
+        // GLPrintln("usb_host_install failed!");
+        Serial.printf("usb_host_install failed! Error: 0x%x\n", install_err);
         return false;
     }
 
     BaseType_t task_created = xTaskCreate(_usb_lib_task, "usb_lib", 4096, this, USB_SERIAL_HOST_PRIORITY, NULL);
     if (task_created != pdTRUE)
     {
-        GLPrintln("usb_lib task_create failed!");
+        // GLPrintln("usb_lib task_create failed!");
+        Serial.println("usb_lib task_create failed!");
+        usb_host_uninstall(); 
         return false;
     }
 

@@ -13,7 +13,7 @@
 #include "freertos/task.h"
 
 
-#include "GroveLog.h"
+// #include "GroveLog.h" // Rimosso perché GroveLog.h è stato eliminato
 
 
 

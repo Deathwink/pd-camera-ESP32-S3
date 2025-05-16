@@ -1,4 +1,5 @@
-#include <M5Unified.h>
+// #include <M5Unified.h>
+#include <memory>
 #include "PDCameraTask.h"
 
 
@@ -106,8 +107,8 @@ void PDCameraTask::BeginTask()
 {
 #if defined USE_CAMERA_BUILTIN
     m_spCamera = std::make_shared<M5CameraBuiltin>();
-#elif defined USE_CAMERA_GROVE
-    m_spCamera = std::make_shared<M5CameraGrove>();
+// #elif defined USE_CAMERA_GROVE // Rimuovo questo blocco perché M5CameraGrove non è usato/portato
+//    m_spCamera = std::make_shared<M5CameraGrove>(); 
 #endif
 
     for (int i = 0; i < CAMERA_QUEUE_POOL_COUNT; i++)
@@ -117,9 +118,9 @@ void PDCameraTask::BeginTask()
     
     m_queue = xQueueCreate(CAMERA_QUEUE_COUNT, sizeof(void*));
 
-    if (!m_spCamera->Initialize())
+    if (!m_spCamera || !m_spCamera->Initialize())
     {
-        M5.Log.println("Camera return Failed.");
+        Serial.println("Camera initialization failed in PDCameraTask.");
         m_spCamera = NULL;
         return;
     }

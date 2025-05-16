@@ -1,5 +1,6 @@
 #pragma once
-#include "Common.h"
+#include "common.h"
+#include <memory>
 
 
 #define USE_CAMERA_BUILTIN
@@ -8,8 +9,8 @@
 
 #if defined USE_CAMERA_BUILTIN
     #include "M5CameraBuiltin.h"
-#elif defined USE_CAMERA_GROVE
-    #include "M5CameraGrove.h"
+// #elif defined USE_CAMERA_GROVE
+//    #include "M5CameraGrove.h"
 #endif
 
 #include <Dither.h>
