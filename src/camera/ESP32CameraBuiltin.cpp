@@ -1,26 +1,25 @@
 #include <Arduino.h>
-// #include <M5Unified.h> // Rimosso
 #include <esp_camera.h>
 #include <vector>
-#include "M5CameraBuiltin.h"
+#include "ESP32CameraBuiltin.h"
 
 
 ///
-M5CameraBuiltin::M5CameraBuiltin()
+ESP32CameraBuiltin::ESP32CameraBuiltin()
 : m_sensor(NULL)
 {
 }
 
 
 ///
-M5CameraBuiltin::~M5CameraBuiltin()
+ESP32CameraBuiltin::~ESP32CameraBuiltin()
 {
 
 }
 
 
 ///
-bool M5CameraBuiltin::Initialize()
+bool ESP32CameraBuiltin::Initialize()
 {
     // Pinout per XIAO ESP32S3 Sense
     static camera_config_t camera_config = {
@@ -55,12 +54,9 @@ bool M5CameraBuiltin::Initialize()
         .grab_mode    = CAMERA_GRAB_WHEN_EMPTY, // o CAMERA_GRAB_LATEST se si preferisce il frame più recente
     };
 
-    // M5.In_I2C.release(); // Rimosso, non sembra necessario per la configurazione standard esp_camera
-
     esp_err_t err = esp_camera_init(&camera_config);
     if (err != ESP_OK)
     {
-        // M5.Lcd.println("Camera Init Failed"); // Rimosso
         Serial.printf("Camera Init Failed with error 0x%x\n", err); // Output su Seriale
         return false;
     }
@@ -68,7 +64,6 @@ bool M5CameraBuiltin::Initialize()
     m_sensor = esp_camera_sensor_get();
     if (m_sensor == NULL)
     {
-        // M5.Lcd.println("Camera Init Failed"); // Rimosso
         Serial.println("Failed to get camera sensor"); // Output su Seriale
         return false;
     }
@@ -83,7 +78,7 @@ bool M5CameraBuiltin::Initialize()
 
 
 ///
-void M5CameraBuiltin::SetContrast(int contrast)
+void ESP32CameraBuiltin::SetContrast(int contrast)
 {
     if (m_sensor)
     {
@@ -93,7 +88,7 @@ void M5CameraBuiltin::SetContrast(int contrast)
 
 
 ///
-void M5CameraBuiltin::SetBrightness(int brightness)
+void ESP32CameraBuiltin::SetBrightness(int brightness)
 {
     if (m_sensor)
     {
@@ -103,7 +98,7 @@ void M5CameraBuiltin::SetBrightness(int brightness)
 
 
 ///
-void M5CameraBuiltin::SetMirror(int mirror)
+void ESP32CameraBuiltin::SetMirror(int mirror)
 {
     if (m_sensor)
     {
@@ -114,10 +109,9 @@ void M5CameraBuiltin::SetMirror(int mirror)
 
 
 ///
-void M5CameraBuiltin::Capture(DataBuffer* data)
+void ESP32CameraBuiltin::Capture(DataBuffer* data)
 {
     // acquire a frame
-    // M5.In_I2C.release(); // Rimosso, non sembra necessario per la cattura standard
 
     assert(data != NULL);
 

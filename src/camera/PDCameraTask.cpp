@@ -1,4 +1,3 @@
-// #include <M5Unified.h>
 #include <memory>
 #include "PDCameraTask.h"
 
@@ -106,7 +105,7 @@ PDCameraTask::~PDCameraTask()
 void PDCameraTask::BeginTask()
 {
 #if defined USE_CAMERA_BUILTIN
-    m_spCamera = std::make_shared<M5CameraBuiltin>();
+    m_spCamera = std::make_shared<ESP32CameraBuiltin>();
 // #elif defined USE_CAMERA_GROVE // Rimuovo questo blocco perché M5CameraGrove non è usato/portato
 //    m_spCamera = std::make_shared<M5CameraGrove>(); 
 #endif

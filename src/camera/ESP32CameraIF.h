@@ -5,7 +5,7 @@
 
 
 ///
-class M5CameraIF
+class ESP32CameraIF
 {
 public:
 

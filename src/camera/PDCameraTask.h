@@ -4,13 +4,10 @@
 
 
 #define USE_CAMERA_BUILTIN
-//#define USE_CAMERA_GROVE
 
 
 #if defined USE_CAMERA_BUILTIN
-    #include "M5CameraBuiltin.h"
-// #elif defined USE_CAMERA_GROVE
-//    #include "M5CameraGrove.h"
+    #include "ESP32CameraBuiltin.h"
 #endif
 
 #include <Dither.h>
@@ -68,7 +65,7 @@ protected:
 
 
     ///
-    std::shared_ptr<M5CameraIF> m_spCamera;
+    std::shared_ptr<ESP32CameraIF> m_spCamera;
 
     ///
     void Capture();

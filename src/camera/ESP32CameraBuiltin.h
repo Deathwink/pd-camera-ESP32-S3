@@ -1,13 +1,13 @@
 #pragma once
 #include "Common.h"
-#include "M5CameraIF.h"
+#include "ESP32CameraIF.h"
 #include <esp_camera.h>
 
 
 
 ///
-class M5CameraBuiltin
-    : public M5CameraIF
+class ESP32CameraBuiltin
+    : public ESP32CameraIF
 {
 private:
 
@@ -21,15 +21,15 @@ public:
 
 
     ///
-    M5CameraBuiltin();
+    ESP32CameraBuiltin();
 
     ///
-    ~M5CameraBuiltin();
+    ~ESP32CameraBuiltin();
 
 
 
     /*
-        M5CameraIF
+        ESP32CameraIF
     */
 
 

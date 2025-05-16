@@ -1,6 +1,5 @@
 #include "Common.h"
 #include <Arduino.h> // Assicura che Arduino.h sia incluso per LED_BUILTIN, pinMode, digitalWrite, millis
-// #include <M5Unified.h> // Rimosso M5Unified
 #include "PDCamera.h"
 // #include "PowerOffButton.h" // Rimosso PowerOffButton perché dipende da M5Touch
 
@@ -22,12 +21,7 @@ void setup()
     pinMode(userLedPin, OUTPUT);      // Configura il pin del LED come output
     digitalWrite(userLedPin, LOW);    // Accende il LED utente (LOW per accendere)
 
-    // auto cfg = M5.config(); // Rimosso
-    // M5.begin(cfg); // Rimosso
-
     Serial.begin(115200); // Aggiunta inizializzazione Seriale
-    // GLInitialize(GroveLog::M5StackCoreS3_PortB); // Rimosso, GroveLog potrebbe richiedere modifiche o rimozione
-    // GLPrintln("== Begin pd-camera-m5 =="); // Rimosso
     Serial.println("== Begin pd-camera-xiao =="); // Aggiunto messaggio di avvio su Seriale
 
     // To supply power to Playdate.
@@ -43,8 +37,6 @@ void setup()
 ///
 void loop()
 {
-    // M5.update(); // Rimosso
-    // offBtn.Update(); // Rimosso
 
     // Logica per spegnere il LED utente dopo 10 secondi
     if (pdCameraInitializedTime > 0 && !userLedTurnedOff) {
