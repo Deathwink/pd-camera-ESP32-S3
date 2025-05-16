@@ -41,6 +41,8 @@ PD-Camera for XIAO ESP32S3 Sense requires the following hardware.
 
 - [Seeed Studio XIAO ESP32S3 Sense](https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html)
 
+- [3.7v Battery (like this one)](https://www.amazon.it/dp/B08214DJLJ)
+
 - USB-C cable
 
 ## Companion app
